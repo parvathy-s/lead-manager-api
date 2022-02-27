@@ -92,7 +92,7 @@ express()
     res.status(401).send("ERROR");
     else
     {
-      res.status(200).json(rows);
+      res.status(200).json(rows[0]);
       //console.log(rows.length);
     }
     
