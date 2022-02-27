@@ -27,7 +27,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:5000/'
+        url: 'https://lead-api-app.herokuapp.com/'
       }
     ]
   },
