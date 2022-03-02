@@ -97,4 +97,26 @@ express()
     }
     
   })
+  /**
+   * @swagger
+   * /get_user/{id}:
+   *  get:
+   *      summary: Fetch specific from Example SF Object
+   *      description: Fetch example data by ID from Heroku Postgres
+   *      parameters:
+   *           - in: path
+   *             name: id
+   *             required: true
+   *             description: Username required
+   *             schema:
+   *                type: string
+   *      responses:
+   *          200:
+   *              description: Status OK
+   */
+  .get('/get_user/:id', async (req,res) =>{
+    var usr = `'${req.params.id}'`;
+    const { rows } = await db.query(`select firstname,lastname,email,phone from salesforce.user where username=${usr}`);
+    res.status(200).json(rows[0]);
+  })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
