@@ -139,6 +139,11 @@ express()
    .get('/get_account/:id', async (req,res) =>{
     var usr = `'${req.params.id}'`;
     const { rows } = await db.query(`select ac_extid__c, name, phone, type, description, industry from salesforce.account where ownerid in (select sfid from salesforce.user where username=${usr})`);
-    res.status(200).json(rows);
+    if(rows.length==0)
+    res.status(401).send("ERROR");
+    else
+    {
+      res.status(200).json(rows);
+    }
   })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
