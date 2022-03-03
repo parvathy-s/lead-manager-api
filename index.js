@@ -119,4 +119,26 @@ express()
     const { rows } = await db.query(`select firstname,lastname,email,phone from salesforce.user where username=${usr}`);
     res.status(200).json(rows[0]);
   })
+  /**
+   * @swagger
+   * /get_account/{id}:
+   *  get:
+   *      summary: Fetch all account records
+   *      description: Fetch account by ID from Heroku Postgres
+   *      parameters:
+   *           - in: path
+   *             name: id
+   *             required: true
+   *             description: Username required
+   *             schema:
+   *                type: string
+   *      responses:
+   *          200:
+   *              description: Status OK
+   */
+   .get('/get_account/:id', async (req,res) =>{
+    var usr = `'${req.params.id}'`;
+    const { rows } = await db.query(`select ac_extid__c, name, phone, type, description, industry from salesforce.account where ownerid in (select sfid from salesforce.user where username=${usr})`);
+    res.status(200).json(rows);
+  })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
