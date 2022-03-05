@@ -146,4 +146,50 @@ express()
       res.status(200).json(rows);
     }
   })
+   /**
+   * @swagger
+   *  components:
+   *      schemas:
+   *          Account: 
+   *                type: object
+   *                properties:
+   *                    name:
+   *                        type: string
+   *                    phone:
+   *                        type: integer
+   *                    type:
+   *                        type: string
+   *                    description:
+   *                        type: string
+   *                    industry:
+   *                        type: string
+   */
+  /**
+   * @swagger
+   * /save_account:
+   *  post:
+   *      summary: Create new Account values
+   *      description: Post test 
+   *      requestBody:
+   *          required: true
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                     $ref: '#components/schemas/Account' 
+   *      responses:
+   *          200:
+   *              description: Status OK
+   *          401:
+   *              description: Error
+   */
+  .post('/save_account',(req,res) =>{
+      db.query('INSERT INTO salesforce.account(name, phone, type, description, industry) values ($1, $2, $3, $4, $5)',
+      [req.body.name.trim(), req.body.phone, req.body.type.trim(), req.body.description.trim(), req.body.industry.trim()], (err, result) => {
+        if (err) {
+          res.status(404).send(err.stack);
+        } else {
+          res.status(200).send("Inserted");
+        }
+      })
+  })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
