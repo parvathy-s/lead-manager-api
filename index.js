@@ -4,6 +4,9 @@ const express = require('express')
 const path = require('path')
 const PORT = process.env.PORT || 5000
 
+var dbstat ={
+  status: "null"
+}
 
 const cors = require('cors');
 const { Pool } = require('pg');
@@ -27,7 +30,7 @@ const options = {
     },
     servers: [
       {
-        url: 'https://lead-api-app.herokuapp.com/'
+        url: 'http://lead-api-app.herokuapp.com/'
       }
     ]
   },
@@ -156,7 +159,7 @@ express()
    *                    name:
    *                        type: string
    *                    phone:
-   *                        type: integer
+   *                        type: string
    *                    type:
    *                        type: string
    *                    description:
@@ -188,7 +191,8 @@ express()
         if (err) {
           res.status(404).send(err.stack);
         } else {
-          res.status(200).send("Inserted");
+          dbstat.status = "inserted"
+          res.status(200).json(dbstat);
         }
       })
   })
