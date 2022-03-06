@@ -30,7 +30,7 @@ const options = {
     },
     servers: [
       {
-        url: 'https://lead-api-app.herokuapp.com/api-docs/'
+        url: 'https://lead-api-app.herokuapp.com/'
       }
     ]
   },
