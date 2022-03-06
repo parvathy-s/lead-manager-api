@@ -30,7 +30,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://lead-api-app.herokuapp.com/'
+        url: 'https://lead-api-app.herokuapp.com/api-docs/'
       }
     ]
   },
@@ -196,4 +196,26 @@ express()
         }
       })
   })
+    /**
+   * @swagger
+   * /account_info/{id}:
+   *  get:
+   *      summary: Fetch specific account
+   *      description: Fetch example data by ID from Heroku Postgres
+   *      parameters:
+   *           - in: path
+   *             name: id
+   *             required: true
+   *             description: ACCID required
+   *             schema:
+   *                type: string
+   *      responses:
+   *          200:
+   *              description: Status OK
+   */
+     .get('/account_info/:id', async (req,res) =>{
+      var aid = `'${req.params.id}'`;
+      const { rows } = await db.query(`select name, phone, type, description, industry from salesforce.account where ac_extid__c=${aid}`);
+      res.status(200).json(rows[0]);
+    })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
