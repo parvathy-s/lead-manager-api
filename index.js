@@ -218,4 +218,40 @@ express()
       const { rows } = await db.query(`select name, phone, type, description, industry from salesforce.account where ac_extid__c=${aid}`);
       res.status(200).json(rows[0]);
     })
+     /**
+   * @swagger
+   * /update_account/{id}:
+   *  put:
+   *      summary: Update existing Account records
+   *      description: Put test 
+   *      parameters:
+   *           - in: path
+   *             name: id
+   *             required: true
+   *             description: Unique ID required
+   *             schema:
+   *                type: string
+   *      requestBody:
+   *          required: true
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                     $ref: '#components/schemas/Account' 
+   *      responses:
+   *          200:
+   *              description: Status OK
+   *          401:
+   *              description: Error
+   */
+  .put('/update_account/:id',(req,res) =>{
+    var aid = `'${req.params.id}'`;
+    db.query('UPDATE salesforce.account set name= $1, phone= $2, type= $3, description= $4, industry= $5 where ac_extid__c= $6',
+      [req.body.name.trim(), req.body.phone.trim(),req.body.type.trim(),req.body.description.trim(),req.body.industry.trim(), req.params.id], (err, result) => {
+        if (err) {
+          res.status(404).send(err.stack);
+        } else {
+          res.status(200).send("Updated");
+        }
+      })
+  })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
