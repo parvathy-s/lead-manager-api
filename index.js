@@ -250,7 +250,8 @@ express()
         if (err) {
           res.status(404).send(err.stack);
         } else {
-          res.status(200).send("Updated");
+          dbstat.status = "inserted"
+          res.status(200).json(dbstat);
         }
       })
   })
