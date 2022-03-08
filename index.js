@@ -126,6 +126,8 @@ express()
    * @swagger
    * /get_account/{id}:
    *  get:
+   *      tags:
+   *          - Account
    *      summary: Fetch all account records
    *      description: Fetch account by ID from Heroku Postgres
    *      parameters:
@@ -171,6 +173,8 @@ express()
    * @swagger
    * /save_account:
    *  post:
+   *      tags:
+   *          - Account
    *      summary: Create new Account values
    *      description: Post test 
    *      requestBody:
@@ -200,6 +204,8 @@ express()
    * @swagger
    * /account_info/{id}:
    *  get:
+   *      tags:
+   *          - Account
    *      summary: Fetch specific account
    *      description: Fetch example data by ID from Heroku Postgres
    *      parameters:
@@ -222,6 +228,8 @@ express()
    * @swagger
    * /update_account/{id}:
    *  put:
+   *      tags:
+   *          - Account
    *      summary: Update existing Account records
    *      description: Put test 
    *      parameters:
@@ -259,6 +267,8 @@ express()
    * @swagger
    * /delete_account/{id}:
    *  post:
+   *      tags:
+   *          - Account
    *      summary: Delet existing Account records
    *      description: Delet test 
    *      parameters:
@@ -285,4 +295,33 @@ express()
         }
       })
     })
+    /**
+   * @swagger
+   * /get_contact/{id}:
+   *  get:
+   *      tags:
+   *          - Contact
+   *      summary: Fetch all contact records
+   *      description: Fetch contact by ID from Heroku Postgres
+   *      parameters:
+   *           - in: path
+   *             name: id
+   *             required: true
+   *             description: Username required
+   *             schema:
+   *                type: string
+   *      responses:
+   *          200:
+   *              description: Status OK
+   */
+   .get('/get_contact/:id', async (req,res) =>{
+    var usr = `'${req.params.id}'`;
+    const { rows } = await db.query(`select c.c_extd__c,c.name, a.name, c.title from salesforce.contact c, salesforce.account a where c.accountid = a.sfid and c.ownerid in (select sfid from salesforce.user where username= ${usr})`);
+    if(rows.length==0)
+    res.status(401).send("ERROR");
+    else
+    {
+      res.status(200).json(rows);
+    }
+  })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
