@@ -316,7 +316,7 @@ express()
    */
    .get('/get_contact/:id', async (req,res) =>{
     var usr = `'${req.params.id}'`;
-    const { rows } = await db.query(`select c.c_extd__c,c.name, a.name, c.title from salesforce.contact c, salesforce.account a where c.accountid = a.sfid and c.ownerid in (select sfid from salesforce.user where username= ${usr})`);
+    const { rows } = await db.query(`select c.c_extd__c,c.name "cname" , a.name "aname" , c.title from salesforce.contact c, salesforce.account a where c.accountid = a.sfid and c.ownerid in (select sfid from salesforce.user where username= ${usr})`);
     if(rows.length==0)
     res.status(401).send("ERROR");
     else
