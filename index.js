@@ -324,4 +324,33 @@ express()
       res.status(200).json(rows);
     }
   })
+   /**
+   * @swagger
+   * /account_list/{id}:
+   *  get:
+   *      tags:
+   *          - Contact
+   *      summary: List accounts
+   *      description: To be fed to spinner
+   *      parameters:
+   *           - in: path
+   *             name: id
+   *             required: true
+   *             description: Username required
+   *             schema:
+   *                type: string
+   *      responses:
+   *          200:
+   *              description: Status OK
+   */
+    .get('/account_list/:id', async (req,res) =>{
+      var usr = `'${req.params.id}'`;
+      const { rows } = await db.query(`select name, sfid from salesforce.account where ownerid in (select sfid from salesforce.user where username= ${usr});`);
+      if(rows.length==0)
+      res.status(401).send("ERROR");
+      else
+      {
+        res.status(200).json(rows);
+      }
+    })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
