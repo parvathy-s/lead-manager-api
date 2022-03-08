@@ -468,4 +468,36 @@ express()
         }
       })
   })
+   /**
+   * @swagger
+   * /delete_contact/{id}:
+   *  post:
+   *      tags:
+   *          - Contact
+   *      summary: Delet existing Contact records
+   *      description: Delet test 
+   *      parameters:
+   *           - in: path
+   *             name: id
+   *             required: true
+   *             description: Unique ID required
+   *             schema:
+   *                type: string
+   *      responses:
+   *          200:
+   *              description: Status OK
+   *          401:
+   *              description: Error
+   */
+    .post('/delete_contact/:id', (req,res) =>{
+      db.query('DELETE from salesforce.contact where c_extd__c= $1',
+      [req.params.id], (err, result) => {
+        if (err) {
+          res.status(404).send(err.stack);
+        } else {
+          dbstat.status = "deleted"
+          res.status(200).json(dbstat);
+        }
+      })
+    })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
