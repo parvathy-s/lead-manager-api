@@ -406,4 +406,28 @@ express()
       }
     })
 })
+   /**
+   * @swagger
+   * /contact_info/{id}:
+   *  get:
+   *      tags:
+   *          - Contact
+   *      summary: Fetch specific contact
+   *      description: Fetch example data by ID from Heroku Postgres
+   *      parameters:
+   *           - in: path
+   *             name: id
+   *             required: true
+   *             description: cxtdid required
+   *             schema:
+   *                type: string
+   *      responses:
+   *          200:
+   *              description: Status OK
+   */
+    .get('/account_info/:id', async (req,res) =>{
+      var cid = `'${req.params.id}'`;
+      const { rows } = await db.query(`select name, firstname, lastname, accountid, title, phone, email from salesforce.contact where c_extd__c=${cid}`);
+      res.status(200).json(rows[0]);
+    })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
