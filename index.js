@@ -396,7 +396,7 @@ express()
    *              description: Error
    */
   .post('/save_contact',(req,res) =>{
-    db.query('INSERT INTO salesforce.account(name, firstname, lastname, accountid, title, phone, email) values ($1, $2, $3, $4, $5, $6, $7)',
+    db.query('INSERT INTO salesforce.contact(name, firstname, lastname, accountid, title, phone, email) values ($1, $2, $3, $4, $5, $6, $7)',
     [req.body.name.trim(), req.body.firstname.trim(), req.body.lastname.trim(), req.body.accountid.trim(), req.body.title.trim(), req.body.phone.trim(), req.body.email.trim()], (err, result) => {
       if (err) {
         res.status(404).send(err.stack);
