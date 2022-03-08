@@ -430,4 +430,42 @@ express()
       const { rows } = await db.query(`select name, firstname, lastname, accountid, title, phone, email from salesforce.contact where c_extd__c=${cid}`);
       res.status(200).json(rows[0]);
     })
+     /**
+   * @swagger
+   * /update_contact/{id}:
+   *  put:
+   *      tags:
+   *          - Contact
+   *      summary: Update existing Contact records
+   *      description: Put test 
+   *      parameters:
+   *           - in: path
+   *             name: id
+   *             required: true
+   *             description: Unique ID required
+   *             schema:
+   *                type: string
+   *      requestBody:
+   *          required: true
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                     $ref: '#components/schemas/Contact' 
+   *      responses:
+   *          200:
+   *              description: Status OK
+   *          401:
+   *              description: Error
+   */
+  .put('/update_contact/:id',(req,res) =>{
+    db.query('UPDATE salesforce.contact set firstname= $1, lastname= $2, name= $3, accountid= $4, title= $5, phone= $6, email= $7 where c_extd__c= $8',
+      [req.body.firstname.trim(), req.body.lastname.trim(),req.body.name.trim(),req.body.accountid.trim(),req.body.title.trim(),req.body.phone.trim(),req.body.email.trim(), req.params.id], (err, result) => {
+        if (err) {
+          res.status(404).send(err.stack);
+        } else {
+          dbstat.status = "updated"
+          res.status(200).json(dbstat);
+        }
+      })
+  })
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
