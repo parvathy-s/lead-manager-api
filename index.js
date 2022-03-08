@@ -425,7 +425,7 @@ express()
    *          200:
    *              description: Status OK
    */
-    .get('/account_info/:id', async (req,res) =>{
+    .get('/contact_info/:id', async (req,res) =>{
       var cid = `'${req.params.id}'`;
       const { rows } = await db.query(`select name, firstname, lastname, accountid, title, phone, email from salesforce.contact where c_extd__c=${cid}`);
       res.status(200).json(rows[0]);
