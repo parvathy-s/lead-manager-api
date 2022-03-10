@@ -532,4 +532,28 @@ express()
         res.status(200).json(rows);
       }
     })
+      /**
+  * @swagger
+  * /contact_list/{id}:
+  *  get:
+  *      tags:
+  *          - Opportunity
+  *      summary: List contact
+  *      description: To be fed to spinner
+  *      parameters:
+  *           - in: path
+  *             name: id
+  *             required: true
+  *             description: Username required
+  *             schema:
+  *                type: string
+  *      responses:
+  *          200:
+  *              description: Status OK
+  */
+  .get('/contact_list/:id', async (req, res) => {
+    var aid = `'${req.params.id}'`;
+    const { rows } = await db.query(`select sfid, name from salesforce.contact where accountid=${aid}`);
+    res.status(200).json(rows);
+  })
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
