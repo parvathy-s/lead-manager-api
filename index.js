@@ -283,22 +283,29 @@ express()
  *              description: Error
  */
   .post('/delete_account/:id', (req, res) => {
-    db.query('DELETE from salesforce.contact where accountid in (SELECT sfid from salesforce.account where ac_extid__c= $1)',
-      [req.params.id], (err, result) => {
-        if (err) {
-          res.status(404).send(err.stack);
-        } else {
-          db.query('DELETE from salesforce.account where ac_extid__c= $1',
-            [req.params.id], (err, result) => {
-              if (err) {
-                res.status(404).send(err.stack);
-              } else {
-                dbstat.status = "deleted"
-                res.status(200).json(dbstat);
-              }
-            })
-        }
-      })
+    db.query('DELETE from salesforce.opportunity where accountid in (SELECT sfid from salesforce.account where ac_extid__c= $1)',
+    [req.params.id], (err, result) => {
+      if (err) {
+        res.status(404).send(err.stack);
+      } else {
+        db.query('DELETE from salesforce.contact where accountid in (SELECT sfid from salesforce.account where ac_extid__c= $1)',
+          [req.params.id], (err, result) => {
+            if (err) {
+              res.status(404).send(err.stack);
+            } else {
+              db.query('DELETE from salesforce.account where ac_extid__c= $1',
+                [req.params.id], (err, result) => {
+                  if (err) {
+                    res.status(404).send(err.stack);
+                  } else {
+                    dbstat.status = "deleted"
+                    res.status(200).json(dbstat);
+                  }
+                })
+            }
+          })
+      }
+    })
 
   })
   /**
