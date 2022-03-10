@@ -494,13 +494,20 @@ express()
   *              description: Error
   */
   .post('/delete_contact/:id', (req, res) => {
-    db.query('DELETE from salesforce.contact where c_extd__c= $1',
+    db.query('DELETE from salesforce.opportunity where contact__c in (SELECT sfid from salesforce.contact where c_extd__c= $1)',
       [req.params.id], (err, result) => {
         if (err) {
           res.status(404).send(err.stack);
         } else {
-          dbstat.status = "deleted"
-          res.status(200).json(dbstat);
+          db.query('DELETE from salesforce.contact where c_extd__c= $1',
+            [req.params.id], (err, result) => {
+              if (err) {
+                res.status(404).send(err.stack);
+              } else {
+                dbstat.status = "deleted"
+                res.status(200).json(dbstat);
+              }
+            })
         }
       })
   })
