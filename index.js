@@ -556,4 +556,55 @@ express()
     const { rows } = await db.query(`select sfid, name from salesforce.contact where accountid=${aid}`);
     res.status(200).json(rows);
   })
+    /**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          Opportunity: 
+ *                type: object
+ *                properties:
+ *                    name:
+ *                        type: string
+ *                    amount:
+ *                        type: string
+ *                    closedate:
+ *                        type: string
+ *                    stage:
+ *                        type: string
+ *                    accountid:
+ *                        type: string
+ *                    contactid:
+ *                        type: string
+ */
+  /**
+   * @swagger
+   * /save_opportunity:
+   *  post:
+   *      tags:
+   *          - Opportunity
+   *      summary: Create new Opportunity values
+   *      description: Post test 
+   *      requestBody:
+   *          required: true
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                     $ref: '#components/schemas/Opportunity' 
+   *      responses:
+   *          200:
+   *              description: Status OK
+   *          401:
+   *              description: Error
+   */
+   .post('/save_opportunity', (req, res) => {
+    db.query('INSERT INTO salesforce.opportunity(name, amount, closedate, stagename, accountid, contact__c) values ($1, $2, $3, $4, $5, $6)',
+      [req.body.name.trim(), req.body.amount.trim(), req.body.closedate.trim(), req.body.stage.trim(), req.body.accountid.trim(), req.body.contactid.trim()], (err, result) => {
+        if (err) {
+          res.status(404).send(err.stack);
+        } else {
+          dbstat.status = "inserted"
+          res.status(200).json(dbstat);
+        }
+      })
+  })
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
