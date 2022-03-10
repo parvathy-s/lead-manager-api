@@ -631,4 +631,42 @@ express()
       const { rows } = await db.query(`select name, amount, closedate, stagename, accountid, contact__c from salesforce.opportunity where o_extid__c=${oid}`);
       res.status(200).json(rows[0]);
     })
+      /**
+* @swagger
+* /update_opportunity/{id}:
+*  put:
+*      tags:
+*          - Opportunity
+*      summary: Update existing Opportunity records
+*      description: Put test 
+*      parameters:
+*           - in: path
+*             name: id
+*             required: true
+*             description: Unique ID required
+*             schema:
+*                type: string
+*      requestBody:
+*          required: true
+*          content:
+*              application/json:
+*                  schema:
+*                     $ref: '#components/schemas/Opportunity' 
+*      responses:
+*          200:
+*              description: Status OK
+*          401:
+*              description: Error
+*/
+  .put('/update_opportunity/:id', (req, res) => {
+    db.query('UPDATE salesforce.opportunity set name= $1, amount= $2, closedate= $3, stagename= $4, accountid= $5, contact__c= $6 where o_extid__c= $7',
+      [req.body.name.trim(), req.body.amount.trim(), req.body.closedate.trim(), req.body.stage.trim(), req.accountid.title.trim(), req.body.contactid.trim(), req.params.id], (err, result) => {
+        if (err) {
+          res.status(404).send(err.stack);
+        } else {
+          dbstat.status = "updated"
+          res.status(200).json(dbstat);
+        }
+      })
+  })
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
