@@ -607,4 +607,28 @@ express()
         }
       })
   })
+    /**
+  * @swagger
+  * /opportunity_info/{id}:
+  *  get:
+  *      tags:
+  *          - Opportunity
+  *      summary: Fetch specific opportunity
+  *      description: Fetch example data by ID from Heroku Postgres
+  *      parameters:
+  *           - in: path
+  *             name: id
+  *             required: true
+  *             description: oxtdid required
+  *             schema:
+  *                type: string
+  *      responses:
+  *          200:
+  *              description: Status OK
+  */
+     .get('/opportunity_info/:id', async (req, res) => {
+      var oid = `'${req.params.id}'`;
+      const { rows } = await db.query(`select name, amount, closedate, stagename, accountid, contact__c from salesforce.opportunity where o_extid__c=${oid}`);
+      res.status(200).json(rows[0]);
+    })
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
