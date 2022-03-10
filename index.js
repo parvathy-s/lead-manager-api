@@ -288,8 +288,6 @@ express()
         if (err) {
           res.status(404).send(err.stack);
         } else {
-          // dbstat.status = "deleted"
-          // res.status(200).json(dbstat);
           db.query('DELETE from salesforce.account where ac_extid__c= $1',
             [req.params.id], (err, result) => {
               if (err) {
@@ -506,4 +504,32 @@ express()
         }
       })
   })
+   /**
+ * @swagger
+ * /get_opportunity/{id}:
+ *  get:
+ *      tags:
+ *          - Opportunity
+ *      summary: Fetch all opportunity records
+ *      description: Fetch opportunity by ID from Heroku Postgres
+ *      parameters:
+ *           - in: path
+ *             name: id
+ *             required: true
+ *             description: Username required
+ *             schema:
+ *                type: string
+ *      responses:
+ *          200:
+ *              description: Status OK
+ */
+    .get('/get_opportunity/:id', async (req, res) => {
+      var usr = `'${req.params.id}'`;
+      const { rows } = await db.query(`select o.o_extid__c, o.name "oname", a.name "aname", o.stagename from salesforce.opportunity o, salesforce.account a where o.accountid=a.sfid and o.ownerid in (select sfid from salesforce.user where username= ${usr});`);
+      if (rows.length == 0)
+        res.status(401).send("ERROR");
+      else {
+        res.status(200).json(rows);
+      }
+    })
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
