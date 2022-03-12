@@ -743,4 +743,57 @@ express()
       res.status(200).json(rows);
     }
   })
+    /**
+* @swagger
+*  components:
+*      schemas:
+*          Lead: 
+*                type: object
+*                properties:
+*                    firstname:
+*                        type: string
+*                    lastname:
+*                        type: string
+*                    name:
+*                        type: string
+*                    company:
+*                        type: string
+*                    email:
+*                        type: string
+*                    title:
+*                        type: string
+*                    status:
+*                        type: string         
+*/
+  /**
+   * @swagger
+   * /save_lead:
+   *  post:
+   *      tags:
+   *          - Lead
+   *      summary: Create new lead values
+   *      description: Post test 
+   *      requestBody:
+   *          required: true
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                     $ref: '#components/schemas/Lead' 
+   *      responses:
+   *          200:
+   *              description: Status OK
+   *          401:
+   *              description: Error
+   */
+   .post('/save_lead', (req, res) => {
+    db.query('INSERT INTO salesforce.lead(firstname, lastname, name, company, email, title, status) values ($1, $2, $3, $4, $5, $6, $7)',
+      [req.body.firstname.trim(), req.body.lastname.trim(), req.body.name.trim(), req.body.company.trim(), req.body.email.trim(), req.body.title.trim(), req.body.status.trim()], (err, result) => {
+        if (err) {
+          res.status(404).send(err.stack);
+        } else {
+          dbstat.status = "inserted"
+          res.status(200).json(dbstat);
+        }
+      })
+  })
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
