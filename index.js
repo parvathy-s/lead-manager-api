@@ -284,28 +284,28 @@ express()
  */
   .post('/delete_account/:id', (req, res) => {
     db.query('DELETE from salesforce.opportunity where accountid in (SELECT sfid from salesforce.account where ac_extid__c= $1)',
-    [req.params.id], (err, result) => {
-      if (err) {
-        res.status(404).send(err.stack);
-      } else {
-        db.query('DELETE from salesforce.contact where accountid in (SELECT sfid from salesforce.account where ac_extid__c= $1)',
-          [req.params.id], (err, result) => {
-            if (err) {
-              res.status(404).send(err.stack);
-            } else {
-              db.query('DELETE from salesforce.account where ac_extid__c= $1',
-                [req.params.id], (err, result) => {
-                  if (err) {
-                    res.status(404).send(err.stack);
-                  } else {
-                    dbstat.status = "deleted"
-                    res.status(200).json(dbstat);
-                  }
-                })
-            }
-          })
-      }
-    })
+      [req.params.id], (err, result) => {
+        if (err) {
+          res.status(404).send(err.stack);
+        } else {
+          db.query('DELETE from salesforce.contact where accountid in (SELECT sfid from salesforce.account where ac_extid__c= $1)',
+            [req.params.id], (err, result) => {
+              if (err) {
+                res.status(404).send(err.stack);
+              } else {
+                db.query('DELETE from salesforce.account where ac_extid__c= $1',
+                  [req.params.id], (err, result) => {
+                    if (err) {
+                      res.status(404).send(err.stack);
+                    } else {
+                      dbstat.status = "deleted"
+                      res.status(200).json(dbstat);
+                    }
+                  })
+              }
+            })
+        }
+      })
 
   })
   /**
@@ -518,78 +518,78 @@ express()
         }
       })
   })
-   /**
- * @swagger
- * /get_opportunity/{id}:
- *  get:
- *      tags:
- *          - Opportunity
- *      summary: Fetch all opportunity records
- *      description: Fetch opportunity by ID from Heroku Postgres
- *      parameters:
- *           - in: path
- *             name: id
- *             required: true
- *             description: Username required
- *             schema:
- *                type: string
- *      responses:
- *          200:
- *              description: Status OK
- */
-    .get('/get_opportunity/:id', async (req, res) => {
-      var usr = `'${req.params.id}'`;
-      const { rows } = await db.query(`select o.o_extid__c, o.name "oname", a.name "aname", o.stagename from salesforce.opportunity o, salesforce.account a where o.accountid=a.sfid and o.ownerid in (select sfid from salesforce.user where username= ${usr});`);
-      if (rows.length == 0)
-        res.status(401).send("ERROR");
-      else {
-        res.status(200).json(rows);
-      }
-    })
-      /**
-  * @swagger
-  * /contact_list/{id}:
-  *  get:
-  *      tags:
-  *          - Opportunity
-  *      summary: List contact
-  *      description: To be fed to spinner
-  *      parameters:
-  *           - in: path
-  *             name: id
-  *             required: true
-  *             description: Username required
-  *             schema:
-  *                type: string
-  *      responses:
-  *          200:
-  *              description: Status OK
-  */
+  /**
+* @swagger
+* /get_opportunity/{id}:
+*  get:
+*      tags:
+*          - Opportunity
+*      summary: Fetch all opportunity records
+*      description: Fetch opportunity by ID from Heroku Postgres
+*      parameters:
+*           - in: path
+*             name: id
+*             required: true
+*             description: Username required
+*             schema:
+*                type: string
+*      responses:
+*          200:
+*              description: Status OK
+*/
+  .get('/get_opportunity/:id', async (req, res) => {
+    var usr = `'${req.params.id}'`;
+    const { rows } = await db.query(`select o.o_extid__c, o.name "oname", a.name "aname", o.stagename from salesforce.opportunity o, salesforce.account a where o.accountid=a.sfid and o.ownerid in (select sfid from salesforce.user where username= ${usr});`);
+    if (rows.length == 0)
+      res.status(401).send("ERROR");
+    else {
+      res.status(200).json(rows);
+    }
+  })
+  /**
+* @swagger
+* /contact_list/{id}:
+*  get:
+*      tags:
+*          - Opportunity
+*      summary: List contact
+*      description: To be fed to spinner
+*      parameters:
+*           - in: path
+*             name: id
+*             required: true
+*             description: Username required
+*             schema:
+*                type: string
+*      responses:
+*          200:
+*              description: Status OK
+*/
   .get('/contact_list/:id', async (req, res) => {
     var aid = `'${req.params.id}'`;
     const { rows } = await db.query(`select sfid, name from salesforce.contact where accountid=${aid}`);
     res.status(200).json(rows);
   })
-    /**
- * @swagger
- *  components:
- *      schemas:
- *          Opportunity: 
- *                type: object
- *                properties:
- *                    name:
- *                        type: string
- *                    amount:
- *                        type: string
- *                    closedate:
- *                        type: string
- *                    stage:
- *                        type: string
- *                    accountid:
- *                        type: string
- *                    contactid:
- *                        type: string
- */
+  /**
+* @swagger
+*  components:
+*      schemas:
+*          Opportunity: 
+*                type: object
+*                properties:
+*                    name:
+*                        type: string
+*                    amount:
+*                        type: string
+*                    closedate:
+*                        type: string
+*                    stage:
+*                        type: string
+*                    accountid:
+*                        type: string
+*                    contactid:
+*                        type: string
+*/
   /**
    * @swagger
    * /save_opportunity:
@@ -610,7 +610,7 @@ express()
    *          401:
    *              description: Error
    */
-   .post('/save_opportunity', (req, res) => {
+  .post('/save_opportunity', (req, res) => {
     db.query('INSERT INTO salesforce.opportunity(name, amount, closedate, stagename, accountid, contact__c) values ($1, $2, $3, $4, $5, $6)',
       [req.body.name.trim(), req.body.amount.trim(), req.body.closedate.trim(), req.body.stage.trim(), req.body.accountid.trim(), req.body.contactid.trim()], (err, result) => {
         if (err) {
@@ -621,31 +621,31 @@ express()
         }
       })
   })
-    /**
-  * @swagger
-  * /opportunity_info/{id}:
-  *  get:
-  *      tags:
-  *          - Opportunity
-  *      summary: Fetch specific opportunity
-  *      description: Fetch example data by ID from Heroku Postgres
-  *      parameters:
-  *           - in: path
-  *             name: id
-  *             required: true
-  *             description: oxtdid required
-  *             schema:
-  *                type: string
-  *      responses:
-  *          200:
-  *              description: Status OK
-  */
-     .get('/opportunity_info/:id', async (req, res) => {
-      var oid = `'${req.params.id}'`;
-      const { rows } = await db.query(`select name, amount, closedate, stagename, accountid, contact__c from salesforce.opportunity where o_extid__c=${oid}`);
-      res.status(200).json(rows[0]);
-    })
-      /**
+  /**
+* @swagger
+* /opportunity_info/{id}:
+*  get:
+*      tags:
+*          - Opportunity
+*      summary: Fetch specific opportunity
+*      description: Fetch example data by ID from Heroku Postgres
+*      parameters:
+*           - in: path
+*             name: id
+*             required: true
+*             description: oxtdid required
+*             schema:
+*                type: string
+*      responses:
+*          200:
+*              description: Status OK
+*/
+  .get('/opportunity_info/:id', async (req, res) => {
+    var oid = `'${req.params.id}'`;
+    const { rows } = await db.query(`select name, amount, closedate, stagename, accountid, contact__c from salesforce.opportunity where o_extid__c=${oid}`);
+    res.status(200).json(rows[0]);
+  })
+  /**
 * @swagger
 * /update_opportunity/{id}:
 *  put:
@@ -683,36 +683,64 @@ express()
         }
       })
   })
-    /**
-  * @swagger
-  * /delete_opportunity/{id}:
-  *  post:
-  *      tags:
-  *          - Opportunity
-  *      summary: Delet existing Contact records
-  *      description: Delet test 
-  *      parameters:
-  *           - in: path
-  *             name: id
-  *             required: true
-  *             description: Unique ID required
-  *             schema:
-  *                type: string
-  *      responses:
-  *          200:
-  *              description: Status OK
-  *          401:
-  *              description: Error
-  */
-     .post('/delete_opportunity/:id', (req, res) => {
-      db.query('DELETE from salesforce.opportunity where o_extid__c= $1',
-        [req.params.id], (err, result) => {
-          if (err) {
-            res.status(404).send(err.stack);
-          } else {
-            dbstat.status = "deleted"
-            res.status(200).json(dbstat);
-          }
-        })
-    })
+  /**
+* @swagger
+* /delete_opportunity/{id}:
+*  post:
+*      tags:
+*          - Opportunity
+*      summary: Delet existing Contact records
+*      description: Delet test 
+*      parameters:
+*           - in: path
+*             name: id
+*             required: true
+*             description: Unique ID required
+*             schema:
+*                type: string
+*      responses:
+*          200:
+*              description: Status OK
+*          401:
+*              description: Error
+*/
+  .post('/delete_opportunity/:id', (req, res) => {
+    db.query('DELETE from salesforce.opportunity where o_extid__c= $1',
+      [req.params.id], (err, result) => {
+        if (err) {
+          res.status(404).send(err.stack);
+        } else {
+          dbstat.status = "deleted"
+          res.status(200).json(dbstat);
+        }
+      })
+  })
+  /**
+* @swagger
+* /get_lead/{id}:
+*  get:
+*      tags:
+*          - Lead
+*      summary: Fetch all lead records
+*      description: Fetch lead by ID from Heroku Postgres
+*      parameters:
+*           - in: path
+*             name: id
+*             required: true
+*             description: Username required
+*             schema:
+*                type: string
+*      responses:
+*          200:
+*              description: Status OK
+*/
+  .get('/get_lead/:id', async (req, res) => {
+    var usr = `'${req.params.id}'`;
+    const { rows } = await db.query(`SELECT l_extid__c,name, company,status from salesforce.lead where ownerid in (select sfid from salesforce.user where username= ${usr});`);
+    if (rows.length == 0)
+      res.status(401).send("ERROR");
+    else {
+      res.status(200).json(rows);
+    }
+  })
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
