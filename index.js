@@ -858,4 +858,36 @@ express()
       }
     })
 })
+  /**
+* @swagger
+* /delete_lead/{id}:
+*  post:
+*      tags:
+*          - Lead
+*      summary: Delet existing lead records
+*      description: Delet test 
+*      parameters:
+*           - in: path
+*             name: id
+*             required: true
+*             description: Unique ID required
+*             schema:
+*                type: string
+*      responses:
+*          200:
+*              description: Status OK
+*          401:
+*              description: Error
+*/
+.post('/delete_lead/:id', (req, res) => {
+  db.query('DELETE from salesforce.lead where l_extid__c= $1',
+    [req.params.id], (err, result) => {
+      if (err) {
+        res.status(404).send(err.stack);
+      } else {
+        dbstat.status = "deleted"
+        res.status(200).json(dbstat);
+      }
+    })
+})
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
