@@ -796,4 +796,66 @@ express()
         }
       })
   })
+    /**
+* @swagger
+* /lead_info/{id}:
+*  get:
+*      tags:
+*          - Lead
+*      summary: Fetch specific lead
+*      description: Fetch example data by ID from Heroku Postgres
+*      parameters:
+*           - in: path
+*             name: id
+*             required: true
+*             description: lxtdid required
+*             schema:
+*                type: string
+*      responses:
+*          200:
+*              description: Status OK
+*/
+.get('/lead_info/:id', async (req, res) => {
+  var lid = `'${req.params.id}'`;
+  const { rows } = await db.query(`select firstname, lastname, name, company, email, title, status from salesforce.lead where l_extid__c=${lid}`);
+  res.status(200).json(rows[0]);
+})
+/**
+* @swagger
+* /update_lead/{id}:
+*  put:
+*      tags:
+*          - Lead
+*      summary: Update existing Lead records
+*      description: Put test 
+*      parameters:
+*           - in: path
+*             name: id
+*             required: true
+*             description: Unique ID required
+*             schema:
+*                type: string
+*      requestBody:
+*          required: true
+*          content:
+*              application/json:
+*                  schema:
+*                     $ref: '#components/schemas/Lead' 
+*      responses:
+*          200:
+*              description: Status OK
+*          401:
+*              description: Error
+*/
+.put('/update_lead/:id', (req, res) => {
+  db.query('UPDATE salesforce.lead set firstname= $1, lastname= $2, name= $3, company= $4, email= $5, title= $6, status= $7 where l_extid__c= $8',
+    [req.body.firstname.trim(), req.body.lastname.trim(), req.body.name.trim(), req.body.company.trim(), req.body.email.trim(), req.body.title.trim(), req.body.status.trim(), req.params.id], (err, result) => {
+      if (err) {
+        res.status(404).send(err.stack);
+      } else {
+        dbstat.status = "updated"
+        res.status(200).json(dbstat);
+      }
+    })
+})
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
